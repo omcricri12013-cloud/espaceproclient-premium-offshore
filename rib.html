@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relevé d'Identité Bancaire - Santander - Banque Numérique</title>
+  <link rel="icon" type="image/png" href="assets/images/santander-emblem.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script type="module" src="https://unpkg.com/ionicons%405.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons%405.5.2/dist/ionicons/ionicons.js"></script>
+  <style>
+:root {
+  --primary-green: #ec0000;
+  --dark-green: #b30000;
+  --light-green: #ff3333;
+  --success-green: #10b981;
+  --danger-red: #ef4444;
+  --warning-orange: #f59e0b;
+  --info-blue: #ec0000;
+  --background-light: #fff5f5;
+  --background-white: #ffffff;
+  --text-primary: #1a202c;
+  --text-secondary: #718096;
+  --border-light: #f0d0d0;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #ffe5e5 0%, #ffcccc 50%, #ffb3b3 100%);
+  min-height: 100vh;
+  padding-bottom: 80px;
+  color: var(--text-primary);
+}
+
+.header {
+  background: var(--background-white);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.header-title { display: flex; align-items: center; gap: 1rem; }
+
+.bank-logo {
+  height: 45px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+.bank-logo:hover { transform: scale(1.05); }
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #ec0000, #ff3333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logout-btn {
+  background: linear-gradient(135deg, #ff3333, #ec0000);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+.logout-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(236, 0, 0, 0.3); }
+
+.main-container { max-width: 1000px; margin: 2rem auto; padding: 0 2rem; }
+
+/* Hero Section — rouge Santander */
+.hero-section {
+  background: linear-gradient(135deg, #ffe5e5 0%, #ffcccc 50%, #ffb3b3 100%);
+  color: var(--text-primary);
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(236, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 40%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, transparent 70%);
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(3deg); }
+}
+
+.hero-content { position: relative; z-index: 1; text-align: center; }
+.hero-title { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #b30000; }
+.hero-subtitle { font-size: 1.2rem; color: #b30000; opacity: 0.85; }
+
+.rib-card {
+  background: var(--background-white);
+  border-radius: 20px;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-light);
+  position: relative;
+}
+.rib-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+}
+
+.rib-header {
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(236, 0, 0, 0.05), rgba(255, 51, 51, 0.05));
+  border-bottom: 1px solid var(--border-light);
+}
+
+.rib-header-content { display: flex; justify-content: space-between; align-items: center; }
+.rib-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+.rib-subtitle { color: var(--text-secondary); font-size: 1rem; }
+.bank-logo-rib { width: 120px; height: auto; opacity: 0.8; }
+.rib-body { padding: 2rem; }
+
+.account-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.info-section {
+  background: var(--background-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-light);
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-icon {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.info-item:last-child { border-bottom: none; }
+.info-label { font-weight: 500; color: var(--text-secondary); font-size: 0.9rem; }
+.info-value {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+.iban-section {
+  background: linear-gradient(135deg, rgba(236, 0, 0, 0.05), rgba(255, 51, 51, 0.05));
+  border: 2px solid rgba(236, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.iban-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.iban-display {
+  background: var(--background-white);
+  border: 2px solid var(--primary-green);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.iban-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  word-spacing: 8px;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--primary-green);
+  color: white;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+.copy-btn:hover { background: var(--dark-green); transform: scale(1.1); }
+
+.actions-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.action-card {
+  background: var(--background-white);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+.action-card:hover { transform: translateY(-4px); border-color: var(--primary-green); box-shadow: var(--shadow-lg); }
+
+.action-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+}
+.action-title { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+.action-description { font-size: 0.9rem; color: var(--text-secondary); }
+
+.qr-section {
+  background: var(--background-white);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+}
+.qr-title { font-size: 1.3rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem; }
+
+.qr-code {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, var(--background-light), #ffe0e0);
+  border-radius: 12px;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border-light);
+}
+
+.qr-placeholder { color: var(--text-secondary); font-size: 3rem; }
+.qr-description { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; }
+
+.generate-qr-btn {
+  background: linear-gradient(135deg, var(--info-blue), #b30000);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.generate-qr-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(236, 0, 0, 0.3); }
+
+.navigation_bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--background-white);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  z-index: 1000;
+  border-top: 1px solid var(--border-light);
+}
+
+.navigation { max-width: 1200px; margin: 0 auto; padding: 0.75rem 0; }
+.navigation ul { display: flex; justify-content: space-around; list-style: none; margin: 0; padding: 0; position: relative; }
+.navigation .list { position: relative; width: 80px; z-index: 2; }
+.navigation .list a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: 0.3s;
+  padding: 8px 0;
+}
+.navigation .list.active a { color: var(--primary-green); transform: translateY(-4px); }
+.navigation .icon { font-size: 24px; margin-bottom: 4px; transition: 0.3s; }
+.navigation .text { font-size: 12px; font-weight: 500; transition: 0.3s; }
+
+.indicator {
+  position: absolute;
+  height: 3px;
+  bottom: -12px;
+  width: 50px;
+  background: var(--primary-green);
+  border-radius: 3px;
+  transition: 0.3s;
+}
+.navigation .list:nth-child(1).active ~ .indicator { transform: translateX(calc(80px * 0 + 15px)); }
+.navigation .list:nth-child(2).active ~ .indicator { transform: translateX(calc(80px * 1 + 15px)); }
+.navigation .list:nth-child(3).active ~ .indicator { transform: translateX(calc(80px * 2 + 15px)); }
+.navigation .list:nth-child(4).active ~ .indicator { transform: translateX(calc(80px * 3 + 15px)); }
+.navigation .list:nth-child(5).active ~ .indicator { transform: translateX(calc(80px * 4 + 15px)); }
+
+@media (max-width: 768px) {
+  .main-container { padding: 0 1rem; }
+  .hero-section { padding: 2rem 1rem; }
+  .hero-title { font-size: 2rem; }
+  .rib-header { padding: 1.5rem; }
+  .rib-body { padding: 1.5rem; }
+  .account-info { grid-template-columns: 1fr; gap: 1rem; }
+  .iban-value { font-size: 1.2rem; letter-spacing: 1px; word-spacing: 4px; }
+  .actions-section { grid-template-columns: 1fr; gap: 1rem; }
+  .rib-header-content { flex-direction: column; gap: 1rem; text-align: center; }
+  .bank-logo-rib { width: 100px; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 1.75rem; }
+  .hero-subtitle { font-size: 1rem; }
+  .iban-section { padding: 1.5rem; }
+  .iban-value { font-size: 1rem; letter-spacing: 0.5px; word-spacing: 2px; line-height: 1.5; }
+  .qr-code { width: 150px; height: 150px; }
+  .header { padding: 1rem; }
+  .page-title { font-size: 1.2rem; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.info-section { animation: fadeInUp 0.6s ease-out; }
+.info-section:nth-child(1) { animation-delay: 0.1s; }
+.info-section:nth-child(2) { animation-delay: 0.2s; }
+.action-card { animation: fadeInUp 0.6s ease-out; }
+.action-card:nth-child(1) { animation-delay: 0.1s; }
+.action-card:nth-child(2) { animation-delay: 0.2s; }
+.action-card:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes checkmark {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.success-icon { animation: checkmark 0.5s ease-out; }
+</style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-title">
+      <img src="assets/images/Santander_Logo.png" alt="Santander Logo" class="bank-logo">
+      <h1 class="page-title">Relevé d'Identité Bancaire</h1>
+    </div>
+    <button class="logout-btn" onclick="deconnexion()">
+      <i class="fas fa-sign-out-alt"></i>
+      Déconnexion
+    </button>
+  </header>
+
+  <div class="main-container">
+    <div class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">Votre RIB</h1>
+        <p class="hero-subtitle">Toutes vos coordonnées bancaires en un clic</p>
+      </div>
+    </div>
+
+    <div class="rib-card">
+      <div class="rib-header">
+        <div class="rib-header-content">
+          <div>
+            <h2 class="rib-title">Relevé d'Identité Bancaire</h2>
+            <p class="rib-subtitle">Coordonnées de votre compte courant</p>
+          </div>
+          <img src="assets/images/Santander_Logo.png" alt="Santander Logo" class="bank-logo-rib">
+        </div>
+      </div>
+
+      <div class="rib-body">
+        <div class="account-info">
+          <div class="info-section">
+            <h3 class="section-title">
+              <div class="section-icon"><i class="fas fa-user"></i></div>
+              Titulaire du Compte
+            </h3>
+            <div class="info-item">
+              <span class="info-label">Nom</span>
+              <span class="info-value">TERRISSE</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Prénom</span>
+              <span class="info-value">CHARLES</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Adresse</span>
+              <span class="info-value">XX XXX<br>XXXXX DIJON</span>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h3 class="section-title">
+              <div class="section-icon"><i class="fas fa-university"></i></div>
+              Informations Bancaires
+            </h3>
+            <div class="info-item">
+              <span class="info-label">Banque</span>
+              <span class="info-value">SANTANDER BANQUE</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Code Banque</span>
+              <span class="info-value">08235 </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Code Guichet</span>
+              <span class="info-value">00583</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">N° Compte</span>
+              <span class="info-value">0000157841Z</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Clé RIB</span>
+              <span class="info-value">25</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="iban-section">
+          <h3 class="iban-title">Code IBAN (International)</h3>
+          <div class="iban-display">
+            <div class="iban-value" id="ibanValue">CH76 3000 4005 8300 0015 7841 Z25</div>
+            <button class="copy-btn" onclick="copyIBAN()" title="Copier l'IBAN">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Code BIC/SWIFT</span>
+            <span class="info-value">CHEDBEBBXXX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions-section">
+      <div class="action-card" onclick="downloadRIB()">
+        <div class="action-icon"><i class="fas fa-download"></i></div>
+        <div class="action-title">Télécharger le RIB</div>
+        <div class="action-description">Format PDF haute qualité</div>
+      </div>
+      <div class="action-card" onclick="printRIB()">
+        <div class="action-icon"><i class="fas fa-print"></i></div>
+        <div class="action-title">Imprimer le RIB</div>
+        <div class="action-description">Version imprimable</div>
+      </div>
+      <div class="action-card" onclick="shareRIB()">
+        <div class="action-icon"><i class="fas fa-share-alt"></i></div>
+        <div class="action-title">Partager le RIB</div>
+        <div class="action-description">Email ou message</div>
+      </div>
+    </div>
+
+    <div class="qr-section">
+      <h3 class="qr-title">QR Code de votre RIB</h3>
+      <div class="qr-code" id="qrCode">
+        <div class="qr-placeholder"><i class="fas fa-qrcode"></i></div>
+      </div>
+      <p class="qr-description">Facilitez le partage de vos coordonnées bancaires</p>
+      <button class="generate-qr-btn" onclick="generateQRCode()">
+        <i class="fas fa-magic"></i>
+        Générer le QR Code
+      </button>
+    </div>
+  </div>
+
+  <div class="navigation_bar">
+    <div class="navigation">
+      <ul>
+        <li class="list"><a href="solde.html"><span class="icon"><ion-icon name="home-outline"></ion-icon></span><span class="text">Accueil</span></a></li>
+        <li class="list"><a href="virement.html"><span class="icon"><ion-icon name="send-outline"></ion-icon></span><span class="text">Virement</span></a></li>
+        <li class="list"><a href="historique.html"><span class="icon"><ion-icon name="time-outline"></ion-icon></span><span class="text">Historique</span></a></li>
+        <li class="list"><a href="cartes.html"><span class="icon"><ion-icon name="card-outline"></ion-icon></span><span class="text">Cartes</span></a></li>
+        <li class="list active"><a href="rib.html"><span class="icon"><ion-icon name="document-text-outline"></ion-icon></span><span class="text">RIB</span></a></li>
+        <div class="indicator"></div>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sections = document.querySelectorAll('.info-section, .action-card');
+      sections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+          section.style.transition = 'all 0.6s ease-out';
+          section.style.opacity = '1';
+          section.style.transform = 'translateY(0)';
+        }, index * 150);
+      });
+    });
+
+    function copyIBAN() {
+      const ibanValue = document.getElementById('ibanValue').textContent;
+      const cleanIBAN = ibanValue.replace(/\s/g, '');
+      navigator.clipboard.writeText(cleanIBAN).then(function() {
+        const copyBtn = document.querySelector('.copy-btn');
+        const originalIcon = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<i class="fas fa-check success-icon"></i>';
+        copyBtn.style.background = 'var(--success-green)';
+        setTimeout(() => {
+          copyBtn.innerHTML = originalIcon;
+          copyBtn.style.background = 'var(--primary-green)';
+        }, 2000);
+        Swal.fire({
+          icon: 'success',
+          title: 'IBAN copié !',
+          text: "L'IBAN a été copié dans le presse-papiers",
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+      }).catch(function(err) {
+        console.error('Erreur lors de la copie:', err);
+        const textArea = document.createElement('textarea');
+        textArea.value = cleanIBAN;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        Swal.fire({
+          icon: 'success',
+          title: 'IBAN copié !',
+          text: "L'IBAN a été copié dans le presse-papiers",
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      });
+    }
+
+    function downloadRIB() {
+      Swal.fire({
+        title: 'Téléchargement du RIB',
+        text: 'Votre RIB va être téléchargé au format PDF',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#ec0000',
+        cancelButtonColor: '#718096',
+        confirmButtonText: 'Télécharger',
+        cancelButtonText: 'Annuler'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Téléchargement en cours...',
+            html: 'Génération du PDF <b></b> secondes.',
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: () => {
+              Swal.showLoading();
+              const b = Swal.getHtmlContainer().querySelector('b');
+              const timer = setInterval(() => {
+                b.textContent = Math.ceil(Swal.getTimerLeft() / 1000);
+              }, 100);
+            },
+            willClose: () => { clearInterval(timer); }
+          }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+              Swal.fire({
+                icon: 'success',
+                title: 'RIB téléchargé !',
+                text: 'Le fichier RIB_BNP_Paribas.pdf a été téléchargé',
+                confirmButtonColor: '#ec0000'
+              });
+            }
+          });
+        }
+      });
+    }
+
+    function printRIB() {
+      Swal.fire({
+        title: 'Impression du RIB',
+        text: 'Voulez-vous imprimer votre RIB ?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ec0000',
+        cancelButtonColor: '#718096',
+        confirmButtonText: 'Imprimer',
+        cancelButtonText: 'Annuler'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.print();
+          Swal.fire({
+            icon: 'success',
+            title: 'Impression lancée !',
+            text: "Votre RIB est en cours d'impression",
+            confirmButtonColor: '#ec0000'
+          });
+        }
+      });
+    }
+
+    function shareRIB() {
+      Swal.fire({
+        title: 'Partager votre RIB',
+        text: 'Comment souhaitez-vous partager votre RIB ?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ec0000',
+        cancelButtonColor: '#ff3333',
+        confirmButtonText: 'Par Email',
+        cancelButtonText: 'Par SMS',
+        showDenyButton: true,
+        denyButtonText: 'Copier le lien',
+        denyButtonColor: '#f59e0b'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          shareByEmail();
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          shareBySMS();
+        } else if (result.isDenied) {
+          copyRIBLink();
+        }
+      });
+    }
+
+    function shareByEmail() {
+      Swal.fire({
+        title: 'Partage par Email',
+        html: `
+          <input id="emailInput" class="swal2-input" placeholder="Adresse email du destinataire" type="email">
+          <textarea id="messageInput" class="swal2-textarea" placeholder="Message personnalisé (optionnel)"></textarea>
+        `,
+        confirmButtonText: 'Envoyer',
+        confirmButtonColor: '#ec0000',
+        showCancelButton: true,
+        preConfirm: () => {
+          const email = document.getElementById('emailInput').value;
+          const message = document.getElementById('messageInput').value;
+          if (!email) {
+            Swal.showValidationMessage('Veuillez saisir une adresse email');
+            return false;
+          }
+          return { email, message };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Email envoyé !',
+            text: `Votre RIB a été envoyé à ${result.value.email}`,
+            confirmButtonColor: '#ec0000'
+          });
+        }
+      });
+    }
+
+    function shareBySMS() {
+      Swal.fire({
+        title: 'Partage par SMS',
+        html: `<input id="phoneInput" class="swal2-input" placeholder="Numéro de téléphone" type="tel">`,
+        confirmButtonText: 'Envoyer',
+        confirmButtonColor: '#ff3333',
+        showCancelButton: true,
+        preConfirm: () => {
+          const phone = document.getElementById('phoneInput').value;
+          if (!phone) {
+            Swal.showValidationMessage('Veuillez saisir un numéro de téléphone');
+            return false;
+          }
+          return { phone };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            icon: 'success',
+            title: 'SMS envoyé !',
+            text: `Votre RIB a été envoyé au ${result.value.phone}`,
+            confirmButtonColor: '#ff3333'
+          });
+        }
+      });
+    }
+
+    function copyRIBLink() {
+      const ribLink = 'https://rib.bnpparibas.fr/share/abc123def456';
+      navigator.clipboard.writeText(ribLink).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Lien copié !',
+          text: 'Le lien de partage a été copié dans le presse-papiers',
+          confirmButtonColor: '#f59e0b'
+        });
+      });
+    }
+
+    function generateQRCode() {
+      const qrContainer = document.getElementById('qrCode');
+      qrContainer.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+          <div class="spinner" style="width: 40px; height: 40px; border: 4px solid var(--border-light); border-left: 4px solid var(--primary-green); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+          <span style="color: var(--text-secondary); font-size: 0.9rem;">Génération...</span>
+        </div>
+      `;
+      setTimeout(() => {
+        qrContainer.innerHTML = `
+          <div style="width: 160px; height: 160px; background: white; border: 2px solid var(--primary-green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--primary-green); text-align: center; line-height: 1.2; padding: 1rem;">
+            QR CODE<br>IBAN<br>FR76 3000<br>4005 8300<br>0015 7841<br>Z25
+          </div>
+        `;
+        Swal.fire({
+          icon: 'success',
+          title: 'QR Code généré !',
+          text: 'Votre QR Code est maintenant disponible',
+          confirmButtonColor: '#ec0000'
+        });
+      }, 2000);
+    }
+
+    function deconnexion() {
+      Swal.fire({
+        title: 'Déconnexion',
+        text: 'Êtes-vous sûr de vouloir vous déconnecter ?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ec0000',
+        cancelButtonColor: '#718096',
+        confirmButtonText: 'Oui, me déconnecter',
+        cancelButtonText: 'Annuler'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.body.style.opacity = '0';
+          document.body.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            window.location.href = 'connexion.html';
+          }, 300);
+        }
+      });
+    }
+
+    const spinKeyframes = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    const style = document.createElement('style');
+    style.textContent = spinKeyframes;
+    document.head.appendChild(style);
+  </script>
+</body>
+
+</html>

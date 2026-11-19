@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+  
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Santander - Banque Numérique</title>
+    <link rel="icon" type="image/png" href="assets/images/santander-emblem.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      :root {
+        --primary-red: #ec0000;
+        --dark-red: #b30000;
+        --light-red: #ff3333;
+        --accent-red: #ff6b6b;
+        --white: #ffffff;
+        --light-gray: #f8fafc;
+        --text-dark: #2d3748;
+        --text-light: #718096;
+        --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-large: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #ffe5e5 0%, #ffcccc 50%, #ffb3b3 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Animated background elements */
+      .bg-decoration {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 0;
+      }
+
+      .bg-decoration::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 40%;
+        height: 200%;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.5), transparent);
+        border-radius: 50%;
+        animation: float 20s ease-in-out infinite;
+      }
+
+      .bg-decoration::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -10%;
+        width: 30%;
+        height: 150%;
+        background: linear-gradient(-45deg, rgba(236, 0, 0, 0.12), transparent);
+        border-radius: 50%;
+        animation: float 25s ease-in-out infinite reverse;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+      }
+
+      .main-container {
+        position: relative;
+        z-index: 1;
+        background: var(--white);
+        padding: 3rem;
+        border-radius: 24px;
+        box-shadow: var(--shadow-large);
+        text-align: center;
+        max-width: 500px;
+        width: 90%;
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(236, 0, 0, 0.15);
+        animation: slideUp 1s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .logo-section {
+        margin-bottom: 2.5rem;
+        position: relative;
+      }
+
+      .logo {
+        width: 200px;
+        height: auto;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover {
+        transform: scale(1.05);
+      }
+
+      .welcome-text {
+        color: var(--text-dark);
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #ec0000, #ff3333);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        color: var(--text-light);
+        font-size: 1.1rem;
+        font-weight: 400;
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+      }
+
+      .cta-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        background: linear-gradient(135deg, #ec0000, #ff3333);
+        color: var(--white);
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-medium);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cta-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s;
+      }
+
+      .cta-button:hover::before {
+        left: 100%;
+      }
+
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(236, 0, 0, 0.25), 0 10px 10px -5px rgba(236, 0, 0, 0.1);
+        text-decoration: none;
+        color: var(--white);
+      }
+
+      .features {
+        margin-top: 3rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .feature-item {
+        padding: 1.5rem 1rem;
+        background: linear-gradient(135deg, #fff0f0, #ffe0e0);
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(236, 0, 0, 0.15);
+      }
+
+      .feature-item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-medium);
+        background: linear-gradient(135deg, #ec0000, #ff3333);
+        color: var(--white);
+      }
+
+      .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        color: #ec0000;
+        transition: color 0.3s ease;
+      }
+
+      .feature-item:hover .feature-icon {
+        color: var(--white);
+      }
+
+      .feature-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        transition: color 0.3s ease;
+      }
+
+      .feature-item:hover .feature-title {
+        color: var(--white);
+      }
+
+      .security-badge {
+        margin-top: 2rem;
+        padding: 1rem;
+        background: linear-gradient(135deg, rgba(236, 0, 0, 0.06), rgba(255, 179, 179, 0.1));
+        border-radius: 12px;
+        border: 1px solid rgba(236, 0, 0, 0.15);
+      }
+
+      .security-text {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .security-icon {
+        color: #ec0000;
+        font-size: 1.1rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .main-container {
+          padding: 2rem;
+          margin: 1rem;
+        }
+
+        .welcome-text {
+          font-size: 1.75rem;
+        }
+
+        .subtitle {
+          font-size: 1rem;
+        }
+
+        .features {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+        }
+
+        .feature-item {
+          padding: 1rem 0.75rem;
+        }
+
+        .feature-icon {
+          font-size: 1.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .main-container {
+          padding: 1.5rem;
+        }
+
+        .logo {
+          width: 160px;
+        }
+
+        .welcome-text {
+          font-size: 1.5rem;
+        }
+
+        .cta-button {
+          padding: 0.875rem 2rem;
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-decoration"></div>
+    
+    <div class="main-container">
+      <div class="logo-section">
+        <img src="assets/images/Santander_Logo.png" alt="Santander Logo" class="logo" />
+        <h1 class="welcome-text">Bienvenue</h1>
+        <p class="subtitle">Votre banque numérique moderne, sécurisée et innovante</p>
+      </div>
+
+      <a href="connexion.html" class="cta-button">
+        <i class="fas fa-sign-in-alt"></i>
+        Accéder à mon espace
+      </a>
+
+      <div class="features">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="feature-title">Sécurité</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <div class="feature-title">Mobile</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="feature-title">24h/24</div>
+        </div>
+      </div>
+
+      <div class="security-badge">
+        <div class="security-text">
+          <i class="fas fa-lock security-icon"></i>
+          Connexion sécurisée SSL 256 bits
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Add smooth scroll and hover effects
+      document.addEventListener('DOMContentLoaded', function() {
+        const ctaButton = document.querySelector('.cta-button');
+        const featureItems = document.querySelectorAll('.feature-item');
+
+        // Add ripple effect to CTA button
+        ctaButton.addEventListener('click', function(e) {
+          const ripple = document.createElement('span');
+          const rect = this.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          const x = e.clientX - rect.left - size / 2;
+          const y = e.clientY - rect.top - size / 2;
+
+          ripple.style.width = ripple.style.height = size + 'px';
+          ripple.style.left = x + 'px';
+          ripple.style.top = y + 'px';
+          ripple.classList.add('ripple');
+
+          this.appendChild(ripple);
+
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+
+        // Animate feature items on scroll
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.style.animation = 'slideUp 0.6s ease-out forwards';
+            }
+          });
+        });
+
+        featureItems.forEach(item => {
+          observer.observe(item);
+        });
+      });
+    </script>
+
+    <style>
+      .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0);
+        animation: ripple-animation 0.6s linear;
+        pointer-events: none;
+      }
+
+      @keyframes ripple-animation {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    </style>
+  </body>
+
+</html>

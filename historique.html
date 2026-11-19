@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historique des Transactions - BNP Paribas</title>
+  <link rel="icon" type="image/png" href="assets/images/santander-emblem.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script type="module" src="https://unpkg.com/ionicons%405.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons%405.5.2/dist/ionicons/ionicons.js"></script>
+  <style>
+:root {
+  --primary-red: #ec0000;
+  --light-red: #ffb3b3;
+  --background-start: #ffe5e5;
+  --background-middle: #ffcccc;
+  --background-end: #ffb3b3;
+  --halo-white: rgba(255, 255, 255, 0.5);
+  --halo-red: rgba(236, 0, 0, 0.12);
+  --success-green: #10b981;
+  --danger-red: #ec0000;
+  --warning-orange: #f59e0b;
+  --info-blue: #ec0000;
+  --background-light: #f8fafc;
+  --background-white: #ffffff;
+  --text-primary: #1a202c;
+  --text-secondary: #718096;
+  --border-light: #e2e8f0;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, var(--background-start) 0%, var(--background-middle) 50%, var(--background-end) 100%);
+  min-height: 100vh;
+  padding-bottom: 80px;
+  color: var(--text-primary);
+}
+
+/* Header moderne */
+.header {
+  background: var(--background-white);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bank-logo {
+  height: 45px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.bank-logo:hover {
+  transform: scale(1.05);
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--primary-red), #c90000);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logout-btn {
+  background: linear-gradient(135deg, var(--light-red), var(--primary-red));
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg, var(--primary-red), #c90000);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--halo-red), 0 0 0 2px var(--halo-white);
+}
+
+/* Main Container */
+.main-container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+/* Hero Section */
+.hero-section {
+  background: var(--background-white);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-red), var(--light-red));
+}
+
+.hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hero-info h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.hero-info p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-red);
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+/* Filters Section */
+.filters-section {
+  background: var(--background-white);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-light);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.filters-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.clear-filters-btn {
+  background: linear-gradient(135deg, var(--text-secondary), #4a5568);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.clear-filters-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-label {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.filter-input {
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--background-white);
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px var(--halo-red);
+}
+
+.filter-tags {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filter-tag {
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--border-light);
+  border-radius: 20px;
+  background: var(--background-white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.filter-tag.active {
+  background: var(--primary-red);
+  color: white;
+  border-color: var(--primary-red);
+}
+
+.filter-tag:hover:not(.active) {
+  border-color: var(--primary-red);
+  color: var(--primary-red);
+}
+
+/* Search Bar */
+.search-section {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.search-wrapper {
+  position: relative;
+  max-width: 500px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 2px solid var(--border-light);
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--background-white);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px var(--halo-red);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Transactions List */
+.transactions-section {
+  background: var(--background-white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+}
+
+.transactions-header {
+  padding: 2rem 2rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transactions-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.export-btn {
+  background: linear-gradient(135deg, var(--light-red), var(--primary-red));
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.export-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px var(--halo-red);
+}
+
+.transactions-list {
+  padding: 2rem;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  background: var(--background-light);
+  border-left: 4px solid var(--border-light);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.transaction-item:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.transaction-item:last-child {
+  margin-bottom: 0;
+}
+
+.transaction-item.income { border-left-color: var(--success-green); }
+.transaction-item.expense { border-left-color: var(--danger-red); }
+.transaction-item.transfer { border-left-color: var(--info-blue); }
+.transaction-item.pending { border-left-color: var(--warning-orange); }
+
+.transaction-main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.transaction-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: white;
+}
+
+.transaction-icon.income { background: linear-gradient(135deg, var(--success-green), #059669); }
+.transaction-icon.expense { background: linear-gradient(135deg, var(--danger-red), #dc2626); }
+.transaction-icon.transfer { background: linear-gradient(135deg, var(--light-red), var(--primary-red)); }
+.transaction-icon.pending { background: linear-gradient(135deg, var(--warning-orange), #d97706); }
+
+.transaction-info {
+  flex: 1;
+}
+
+.transaction-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.transaction-details {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.transaction-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.transaction-amount {
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.transaction-amount.income { color: var(--success-green); }
+.transaction-amount.expense { color: var(--danger-red); }
+.transaction-amount.transfer { color: var(--info-blue); }
+.transaction-amount.pending { color: var(--warning-orange); }
+
+.transaction-status {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.empty-description {
+  font-size: 1rem;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border-light);
+  border-left: 4px solid var(--primary-red);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.pagination-btn {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: var(--background-white);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.pagination-btn:hover,
+.pagination-btn.active {
+  background: var(--primary-red);
+  color: white;
+  border-color: var(--primary-red);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Navigation Bottom */
+.navigation_bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--background-white);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  z-index: 1000;
+  border-top: 1px solid var(--border-light);
+}
+
+.navigation {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 0;
+}
+
+.navigation ul {
+  display: flex;
+  justify-content: space-around;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.navigation .list {
+  position: relative;
+  width: 80px;
+  z-index: 2;
+}
+
+.navigation .list a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: 0.3s;
+  padding: 8px 0;
+}
+
+.navigation .list.active a {
+  color: var(--primary-red);
+  transform: translateY(-4px);
+}
+
+.navigation .icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+  transition: 0.3s;
+}
+
+.navigation .text {
+  font-size: 12px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.indicator {
+  position: absolute;
+  height: 3px;
+  bottom: -12px;
+  width: 50px;
+  background: var(--primary-red);
+  border-radius: 3px;
+  transition: 0.3s;
+}
+
+.navigation .list:nth-child(1).active ~ .indicator {
+  transform: translateX(calc(80px * 0 + 15px));
+}
+.navigation .list:nth-child(2).active ~ .indicator {
+  transform: translateX(calc(80px * 1 + 15px));
+}
+.navigation .list:nth-child(3).active ~ .indicator {
+  transform: translateX(calc(80px * 2 + 15px));
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-container {
+    padding: 0 1rem;
+  }
+  
+  .hero-content {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  
+  .hero-stats {
+    gap: 1rem;
+  }
+  
+  .filters-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .filter-tags {
+    justify-content: center;
+  }
+  
+  .transactions-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .transaction-item {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .transaction-main {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .transaction-amount {
+    text-align: center;
+  }
+  
+  .header {
+    padding: 1rem;
+  }
+  
+  .page-title {
+    font-size: 1.2rem;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.transaction-item {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.transaction-item:nth-child(1) { animation-delay: 0.1s; }
+.transaction-item:nth-child(2) { animation-delay: 0.15s; }
+.transaction-item:nth-child(3) { animation-delay: 0.2s; }
+.transaction-item:nth-child(4) { animation-delay: 0.25s; }
+.transaction-item:nth-child(5) { animation-delay: 0.3s; }
+</style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-title">
+      <img src="assets/images/Santander_Logo.png" alt="Santander_Logo" class="bank-logo">
+      <h1 class="page-title">Historique des Transactions</h1>
+    </div>
+    <button class="logout-btn" onclick="deconnexion()">
+      <i class="fas fa-sign-out-alt"></i>
+      Déconnexion
+    </button>
+  </header>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-content">
+        <div class="hero-info">
+          <h1>Suivi de vos Transactions</h1>
+          <p>Consultez et analysez l'historique complet de vos opérations bancaires</p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-value">247</span>
+            <span class="stat-label">Transactions</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">450€</span>
+            <span class="stat-label">Volume total</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">3</span>
+            <span class="stat-label">En attente</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="filters-header">
+        <h2 class="filters-title">Filtrer les transactions</h2>
+        <button class="clear-filters-btn" onclick="clearAllFilters()">
+          <i class="fas fa-times"></i> Effacer les filtres
+        </button>
+      </div>
+
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label class="filter-label">Période</label>
+          <select class="filter-input" id="periodFilter">
+            <option value="">Toutes les périodes</option>
+            <option value="today">Aujourd'hui</option>
+            <option value="week">Cette semaine</option>
+            <option value="month">Ce mois</option>
+            <option value="quarter">Ce trimestre</option>
+            <option value="year">Cette année</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Montant minimum</label>
+          <input type="number" class="filter-input" id="minAmountFilter" placeholder="0.00 €" step="0.01">
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Montant maximum</label>
+          <input type="number" class="filter-input" id="maxAmountFilter" placeholder="10000.00 €" step="0.01">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Type de transaction</label>
+        <div class="filter-tags">
+          <div class="filter-tag" data-type="all">Toutes</div>
+          <div class="filter-tag" data-type="income">Crédit</div>
+          <div class="filter-tag" data-type="expense">Débit</div>
+          <div class="filter-tag" data-type="transfer">Virement</div>
+          <div class="filter-tag" data-type="pending">En attente</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-wrapper">
+        <input type="text" class="search-input" id="searchInput" placeholder="Rechercher une transaction...">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+
+    <!-- Transactions Section -->
+    <div class="transactions-section">
+      <div class="transactions-header">
+        <h2 class="transactions-title">Dernières Transactions</h2>
+        <button class="export-btn" onclick="exportTransactions()">
+          <i class="fas fa-download"></i>
+          Exporter
+        </button>
+      </div>
+
+      <div class="transactions-list" id="transactionsList">
+        <!-- Les transactions seront générées par JavaScript -->
+      </div>
+
+      <div class="pagination" id="pagination">
+        <!-- La pagination sera générée par JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Bottom -->
+  <div class="navigation_bar">
+    <div class="navigation">
+      <ul>
+        <li class="list">
+          <a href="solde.html">
+            <span class="icon">
+              <ion-icon name="home-outline"></ion-icon>
+            </span>
+            <span class="text">Accueil</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="virement.html">
+            <span class="icon">
+              <ion-icon name="send-outline"></ion-icon>
+            </span>
+            <span class="text">Virement</span>
+          </a>
+        </li>
+        <li class="list active">
+          <a href="historique.html">
+            <span class="icon">
+              <ion-icon name="time-outline"></ion-icon>
+            </span>
+            <span class="text">Historique</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="cartes.html">
+            <span class="icon">
+              <ion-icon name="card-outline"></ion-icon>
+            </span>
+            <span class="text">Cartes</span>
+          </a>
+        </li>
+        <li class="list">
+          <a href="rib.html">
+            <span class="icon">
+              <ion-icon name="document-text-outline"></ion-icon>
+            </span>
+            <span class="text">RIB</span>
+          </a>
+        </li>
+        <div class="indicator"></div>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Données simulées de transactions
+    const transactionsData = [
+      {
+        id: 1,
+        type: 'income',
+        title: 'TRESOR -  PUBLIQUE',
+        details: 'DGFIP',
+        amount: 78300.00,
+        date: new Date(2025, 11, 28, 9, 14, 32),
+        status: 'Validé',
+        icon: 'fa-arrow-down'
+      },
+      {
+        id: 2,
+        type: 'expense',
+        title: 'Prélèvement bancaire',
+        details: 'Achat marchand',
+        amount: -75000.00,
+        date: new Date(2024, 0, 4, 11, 38, 17),
+        status: 'Validé',
+        icon: 'fa-shopping-cart'
+      },
+      {
+        id: 3,
+        type: 'expense',
+        title: 'Carburant - TotalEnergies',
+        details: 'Station-service A6',
+        amount: -1700.00,
+        date: new Date(2024, 0, 4, 16, 52, 41),
+        status: 'Validé',
+        icon: 'fa-gas-pump'
+      },
+      {
+        id: 4,
+        type: 'transfer',
+        title: 'Virement - Catherine Piron',
+        details: 'Remboursement',
+        amount: -37000.00,
+        date: new Date(2026, 10, 23, 10, 26, 53),
+        status: 'Échec',
+        icon: 'fa-exchange-alt'
+      },
+      {
+        id: 5,
+        type: 'income',
+        title: 'Remboursement - Facture EDF',
+        details: 'Remboursement frais médicaux',
+        amount: 1200.00,
+        date: new Date(2025, 9, 3, 14, 7, 26),
+        status: 'Validé',
+        icon: 'fa-gift'
+      },
+      {
+        id: 6,
+        type: 'pending',
+        title: 'Prélèvement - EDF',
+        details: 'Facture électricité',
+        amount: -1200.00,
+        date: new Date(2025, 9, 2, 8, 43, 59),
+        status: 'Validé',
+        icon: 'fa-bolt'
+      },
+      {
+        id: 7,
+        type: 'expense',
+        title: 'Restaurant - Cheval Blanc by Peter Knogl',
+        details: 'Dîner professionnel',
+        amount: -98.75,
+        date: new Date(2025, 7, 1, 19, 21, 4),
+        status: 'Validé',
+        icon: 'fa-utensils'
+      },
+      {
+        id: 8,
+        type: 'income',
+        title: 'Virement - Valerie Valouche',
+        details: 'Soutien familiale',
+        amount: 2000.00,
+        date: new Date(2025, 10, 2, 13, 55, 38),
+        status: 'Validé',
+        icon: 'fa-arrow-down'
+      }
+    ];
+
+    let filteredTransactions = [...transactionsData];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+      setupFilters();
+      setupSearch();
+      renderTransactions();
+      renderPagination();
+    });
+
+    // Configuration des filtres
+    function setupFilters() {
+      // Filtres par tags
+      document.querySelectorAll('.filter-tag').forEach(tag => {
+        tag.addEventListener('click', function() {
+          document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          applyFilters();
+        });
+      });
+
+      // Autres filtres
+      document.getElementById('periodFilter').addEventListener('change', applyFilters);
+      document.getElementById('minAmountFilter').addEventListener('input', debounce(applyFilters, 500));
+      document.getElementById('maxAmountFilter').addEventListener('input', debounce(applyFilters, 500));
+
+      // Sélectionner "Toutes" par défaut
+      document.querySelector('.filter-tag[data-type="all"]').classList.add('active');
+    }
+
+    // Configuration de la recherche
+    function setupSearch() {
+      document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
+    }
+
+    // Fonction debounce pour optimiser les performances
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // Appliquer les filtres
+    function applyFilters() {
+      const activeType = document.querySelector('.filter-tag.active').dataset.type;
+      const period = document.getElementById('periodFilter').value;
+      const minAmount = parseFloat(document.getElementById('minAmountFilter').value) || 0;
+      const maxAmount = parseFloat(document.getElementById('maxAmountFilter').value) || Infinity;
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+      filteredTransactions = transactionsData.filter(transaction => {
+        // Filtre par type
+        if (activeType !== 'all' && transaction.type !== activeType) return false;
+
+        // Filtre par période
+        if (period && !isInPeriod(transaction.date, period)) return false;
+
+        // Filtre par montant
+        const absAmount = Math.abs(transaction.amount);
+        if (absAmount < minAmount || absAmount > maxAmount) return false;
+
+        // Filtre par recherche
+        if (searchTerm && !transaction.title.toLowerCase().includes(searchTerm) && 
+            !transaction.details.toLowerCase().includes(searchTerm)) return false;
+
+        return true;
+      });
+
+      currentPage = 1;
+      renderTransactions();
+      renderPagination();
+    }
+
+    // Vérifier si une date est dans la période spécifiée
+    function isInPeriod(date, period) {
+      const now = new Date();
+      const transactionDate = new Date(date);
+
+      switch (period) {
+        case 'today':
+          return transactionDate.toDateString() === now.toDateString();
+        case 'week':
+          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          return transactionDate >= weekAgo;
+        case 'month':
+          return transactionDate.getMonth() === now.getMonth() && 
+                 transactionDate.getFullYear() === now.getFullYear();
+        case 'quarter':
+          const quarter = Math.floor(now.getMonth() / 3);
+          const transactionQuarter = Math.floor(transactionDate.getMonth() / 3);
+          return quarter === transactionQuarter && 
+                 transactionDate.getFullYear() === now.getFullYear();
+        case 'year':
+          return transactionDate.getFullYear() === now.getFullYear();
+        default:
+          return true;
+      }
+    }
+
+    // Effacer tous les filtres
+    function clearAllFilters() {
+      document.getElementById('periodFilter').value = '';
+      document.getElementById('minAmountFilter').value = '';
+      document.getElementById('maxAmountFilter').value = '';
+      document.getElementById('searchInput').value = '';
+      
+      document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+      document.querySelector('.filter-tag[data-type="all"]').classList.add('active');
+
+      filteredTransactions = [...transactionsData];
+      currentPage = 1;
+      renderTransactions();
+      renderPagination();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Filtres effacés',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    }
+
+    // Rendre les transactions
+    function renderTransactions() {
+      const container = document.getElementById('transactionsList');
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageTransactions = filteredTransactions.slice(startIndex, endIndex);
+
+      if (pageTransactions.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <div class="empty-title">Aucune transaction trouvée</div>
+            <div class="empty-description">Essayez de modifier vos critères de recherche</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = pageTransactions.map(transaction => `
+        <div class="transaction-item ${transaction.type}" onclick="showTransactionDetails(${transaction.id})">
+          <div class="transaction-main">
+            <div class="transaction-icon ${transaction.type}">
+              <i class="fas ${transaction.icon}"></i>
+            </div>
+            <div class="transaction-info">
+              <div class="transaction-title">${transaction.title}</div>
+              <div class="transaction-details">${transaction.details}</div>
+              ${transaction.id !== 4 ? `<div class="transaction-date">${formatDate(transaction.date)}</div>` : ''}
+            </div>
+          </div>
+          <div class="transaction-amount ${transaction.type}">
+            ${transaction.amount > 0 ? '+' : ''}${transaction.amount.toFixed(2)} €
+            <div class="transaction-status">${transaction.status}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Rendre la pagination
+    function renderPagination() {
+      const container = document.getElementById('pagination');
+      const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      let paginationHTML = `
+        <button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+          <i class="fas fa-chevron-left"></i>
+        </button>
+      `;
+
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          paginationHTML += `
+            <button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+              ${i}
+            </button>
+          `;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          paginationHTML += `<span class="pagination-btn">...</span>`;
+        }
+      }
+
+      paginationHTML += `
+        <button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      `;
+
+      container.innerHTML = paginationHTML;
+    }
+
+    // Changer de page
+    function changePage(page) {
+      const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+      if (page < 1 || page > totalPages) return;
+
+      currentPage = page;
+      renderTransactions();
+      renderPagination();
+
+      // Scroll vers le haut
+      document.querySelector('.transactions-section').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+
+    // Formater la date
+    function formatDate(date) {
+      const now = new Date();
+      const transactionDate = new Date(date);
+      const diffTime = now - transactionDate;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) {
+        return `Aujourd'hui, ${transactionDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+      } else if (diffDays === 1) {
+        return `Hier, ${transactionDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+      } else if (diffDays < 7) {
+        return `Il y a ${diffDays} jours`;
+      } else {
+        return transactionDate.toLocaleDateString('fr-FR');
+      }
+    }
+
+    // Afficher les détails d'une transaction
+    function showTransactionDetails(transactionId) {
+      const transaction = transactionsData.find(t => t.id === transactionId);
+      if (!transaction) return;
+
+      const typeText = {
+        income: 'Crédit',
+        expense: 'Débit',
+        transfer: 'Virement',
+        pending: 'En attente'
+      };
+
+      const statusColor = {
+        'Validé': '#10b981',
+        'En attente': '#f59e0b',
+        'Rejeté': '#ef4444'
+      };
+
+      Swal.fire({
+        title: transaction.title,
+        html: `
+          <div style="text-align: left; padding: 1rem;">
+            <div style="margin-bottom: 1rem;">
+              <strong>Type:</strong> ${typeText[transaction.type]}
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <strong>Montant:</strong> 
+              <span style="font-size: 1.2rem; font-weight: bold; color: ${transaction.amount > 0 ? '#10b981' : '#ef4444'}">
+                ${transaction.amount > 0 ? '+' : ''}${transaction.amount.toFixed(2)} €
+              </span>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <strong>Date:</strong> ${transaction.date.toLocaleString('fr-FR')}
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <strong>Statut:</strong> 
+              <span style="color: ${transaction.status === 'Validé' && transaction.type === 'expense' ? '#ec0000' : statusColor[transaction.status] || '#6b7280'}; font-weight: bold;">
+                ${transaction.status}
+              </span>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <strong>Détails:</strong> ${transaction.details}
+            </div>
+            <div>
+              <strong>ID Transaction:</strong> #${transaction.id.toString().padStart(6, '0')}
+            </div>
+          </div>
+        `,
+        confirmButtonColor: '#ec0000',
+        confirmButtonText: 'Fermer'
+      });
+    }
+
+    // Exporter les transactions
+    function exportTransactions() {
+      Swal.fire({
+        title: 'Exporter les transactions',
+        text: 'Choisissez le format d\'export',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ec0000',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'PDF',
+        cancelButtonText: 'CSV',
+        showDenyButton: true,
+        denyButtonText: 'Excel',
+        denyButtonColor: '#ec0000'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          exportToPDF();
+        } else if (result.isDenied) {
+          exportToExcel();
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          exportToCSV();
+        }
+      });
+    }
+
+    function exportToPDF() {
+      Swal.fire({
+        icon: 'success',
+        title: 'Export PDF en cours...',
+        text: 'Votre fichier sera téléchargé dans quelques instants',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+
+    function exportToCSV() {
+      Swal.fire({
+        icon: 'success',
+        title: 'Export CSV en cours...',
+        text: 'Votre fichier sera téléchargé dans quelques instants',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+
+    function exportToExcel() {
+      Swal.fire({
+        icon: 'success',
+        title: 'Export Excel en cours...',
+        text: 'Votre fichier sera téléchargé dans quelques instants',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+
+    // Fonction de déconnexion
+    function deconnexion() {
+      Swal.fire({
+        title: 'Déconnexion',
+        text: 'Êtes-vous sûr de vouloir vous déconnecter ?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ec0000',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Oui, me déconnecter',
+        cancelButtonText: 'Annuler'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Animation de déconnexion
+          document.body.style.opacity = '0';
+          document.body.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            window.location.href = 'connexion.html';
+          }, 300);
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

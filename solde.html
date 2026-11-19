@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de Bord - KBC Brussels</title>
+  <link rel="icon" type="image/png" href="assets/images/santander-emblem.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script type="module" src="https://unpkg.com/ionicons%405.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons%405.5.2/dist/ionicons/ionicons.js"></script>
+  <style>
+:root {
+  --primary-green: #ec0000;
+  --dark-green: #b30000;
+  --light-green: #ff3333;
+  --success-green: #10b981;
+  --danger-red: #ef4444;
+  --warning-orange: #f59e0b;
+  --info-blue: #ec0000;
+  --background-light: #fff5f5;
+  --background-white: #ffffff;
+  --text-primary: #1a202c;
+  --text-secondary: #718096;
+  --border-light: #f0d0d0;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #ffe5e5 0%, #ffcccc 50%, #ffb3b3 100%);
+  min-height: 100vh;
+  padding-bottom: 80px;
+  color: var(--text-primary);
+}
+
+.header {
+  background: var(--background-white);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.header-title { display: flex; align-items: center; gap: 1rem; }
+
+.bank-logo { height: 45px; width: auto; transition: transform 0.3s ease; }
+.bank-logo:hover { transform: scale(1.05); }
+
+.welcome-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ec0000, #ff3333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-actions { display: flex; align-items: center; gap: 1rem; }
+
+.notification-btn {
+  position: relative;
+  background: linear-gradient(135deg, var(--info-blue), #b30000);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+.notification-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(236, 0, 0, 0.3); }
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--danger-red);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-btn {
+  background: linear-gradient(135deg, #ffb3b3, #ff8080);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+.logout-btn:hover { background: linear-gradient(135deg, #ff8080, #ff3333); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255, 128, 128, 0.3); }
+
+.main-container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+
+.account-info-section {
+  background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+  color: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
+.account-info-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 40%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+  animation: float 15s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
+}
+
+.account-info-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+}
+
+.account-details { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.account-holder {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.account-number {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+.account-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  opacity: 0.95;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.meta-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+.meta-label { font-weight: 500; opacity: 0.8; margin-right: 0.5rem; }
+.meta-value { font-weight: 600; }
+
+.account-status { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+
+.status-badge {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.status-badge.active { background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.5); color: #10b981; }
+.status-indicator { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 2s infinite; }
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.dashboard-card {
+  background: var(--background-white);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+}
+.dashboard-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-xl); }
+
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.card-title { font-size: 1rem; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.card-icon {
+  width: 50px; height: 50px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; color: white;
+}
+.card-icon.balance { background: linear-gradient(135deg, var(--primary-green), var(--light-green)); }
+.card-icon.income { background: linear-gradient(135deg, var(--success-green), #059669); }
+.card-icon.expense { background: linear-gradient(135deg, var(--danger-red), #dc2626); }
+.card-icon.pending { background: linear-gradient(135deg, var(--warning-orange), #d97706); }
+
+.card-value { font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+.balance-value { font-size: clamp(1.25rem, 2vw, 1.65rem); white-space: nowrap; }
+.card-change { font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 0.25rem; }
+.card-change.positive { color: var(--success-green); }
+.card-change.negative { color: var(--danger-red); }
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.action-card {
+  background: var(--background-white);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.action-card:hover { transform: translateY(-4px); border-color: var(--primary-green); box-shadow: var(--shadow-lg); }
+
+.action-icon {
+  width: 70px; height: 70px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; color: white;
+  background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+}
+.action-title { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+.action-description { font-size: 0.9rem; color: var(--text-secondary); }
+
+.charts-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.chart-card {
+  background: var(--background-white);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-light);
+}
+
+.chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.chart-title { font-size: 1.3rem; font-weight: 600; color: var(--text-primary); }
+.chart-controls { display: flex; gap: 0.5rem; }
+
+.chart-control {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+.chart-control.active,
+.chart-control:hover { background: var(--primary-green); color: white; border-color: var(--primary-green); }
+
+.chart-container { position: relative; height: 350px; }
+
+.navigation_bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--background-white);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  z-index: 1000;
+  border-top: 1px solid var(--border-light);
+}
+
+.navigation { max-width: 1200px; margin: 0 auto; padding: 0.75rem 0; }
+.navigation ul { display: flex; justify-content: space-around; list-style: none; margin: 0; padding: 0; position: relative; }
+.navigation .list { position: relative; width: 80px; z-index: 2; }
+.navigation .list a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: 0.3s;
+  padding: 8px 0;
+}
+.navigation .list.active a { color: var(--primary-green); transform: translateY(-4px); }
+.navigation .icon { font-size: 24px; margin-bottom: 4px; transition: 0.3s; }
+.navigation .text { font-size: 12px; font-weight: 500; transition: 0.3s; }
+
+.indicator {
+  position: absolute;
+  height: 3px;
+  bottom: -12px;
+  width: 50px;
+  background: var(--primary-green);
+  border-radius: 3px;
+  transition: 0.3s;
+}
+.navigation .list:nth-child(1).active ~ .indicator { transform: translateX(calc(80px * 0 + 15px)); }
+
+@media (max-width: 1200px) {
+  .dashboard-grid { grid-template-columns: 1fr 1fr; }
+  .charts-section { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .main-container { padding: 1rem; }
+  .account-info-section { padding: 1.5rem; margin-bottom: 1.5rem; }
+  .account-info-content { grid-template-columns: 1fr; gap: 1.5rem; text-align: center; }
+  .account-holder { font-size: 1.75rem; }
+  .account-meta { grid-template-columns: 1fr; gap: 0.75rem; }
+  .account-status { align-items: center; }
+  .dashboard-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .dashboard-card { padding: 1.5rem; }
+  .card-value { font-size: 2rem; }
+  .quick-actions { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .action-card { padding: 1.5rem; }
+  .chart-card { padding: 1.5rem; }
+  .chart-container { height: 250px; }
+  .header { padding: 1rem; }
+  .header-title { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .welcome-text { font-size: 1.2rem; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dashboard-card { animation: fadeInUp 0.6s ease-out; }
+.dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+.dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+.notification-badge { animation: pulse 2s infinite; }
+</style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-title">
+      <img src="assets/images/Santander_Logo.png" alt="Santander Logo" class="bank-logo">
+      <div class="welcome-text"></div>
+    </div>
+    <div class="header-actions">
+      <button class="notification-btn">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge">3</span>
+      </button>
+      <button class="logout-btn" onclick="deconnexion()">
+        <i class="fas fa-sign-out-alt"></i>
+        Déconnexion
+      </button>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <div class="account-info-section">
+      <div class="account-info-content">
+        <div class="account-details">
+          <div class="account-holder">CHARLES TERRISSE</div>
+          <div class="account-number">Compte Principal • N° 3000400583000015784125</div>
+          
+          <div class="account-meta">
+            <div class="meta-item">
+              <div class="meta-icon"><i class="fas fa-clock"></i></div>
+              <div>
+                <span class="meta-label">Dernière connexion :</span>
+                <span class="meta-value" id="lastConnection">—</span>
+              </div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-icon"><i class="fas fa-calendar-alt"></i></div>
+              <div>
+                <span class="meta-label">Date :</span>
+                <span class="meta-value" id="currentDate">—</span>
+              </div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-icon"><i class="fas fa-shield-alt"></i></div>
+              <div>
+                <span class="meta-label">Sécurité :</span>
+                <span class="meta-value">Niveau élevé</span>
+              </div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-icon"><i class="fas fa-user-tie"></i></div>
+              <div>
+                <span class="meta-label">Gestionnaire :</span>
+                <span class="meta-value">Roger Müller </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="account-status">
+          <div class="status-badge active">
+            <div class="status-indicator"></div>
+            Compte Bloqué
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div class="card-title">Solde Actuel</div>
+          <div class="card-icon balance"><i class="fas fa-wallet"></i></div>
+        </div>
+        <div class="card-value balance-value">897.730,00 €</div>
+        <div class="card-change positive"><i class="fas fa-arrow-up"></i> +2.5% ce mois</div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div class="card-title">Revenus du Mois</div>
+          <div class="card-icon income"><i class="fas fa-arrow-down"></i></div>
+        </div>
+        <div class="card-value">0,00 €</div>
+        <div class="card-change positive"><i class="fas fa-arrow-up"></i> +8.2% vs mois dernier</div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div class="card-title">Dépenses du Mois</div>
+          <div class="card-icon expense"><i class="fas fa-arrow-up"></i></div>
+        </div>
+        <div class="card-value">0,00 €</div>
+        <div class="card-change negative"><i class="fas fa-arrow-down"></i> -5.1% vs mois dernier</div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-header">
+          <div class="card-title">En Attente</div>
+          <div class="card-icon pending"><i class="fas fa-clock"></i></div>
+        </div>
+        <div class="card-value">00,00 €</div>
+        <div class="card-change"><i class="fas fa-clock"></i> 0 transactions</div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <a href="virement.html" class="action-card">
+        <div class="action-icon"><i class="fas fa-paper-plane"></i></div>
+        <div class="action-title">Virement</div>
+        <div class="action-description">Effectuer un virement instantané</div>
+      </a>
+      <a href="historique.html" class="action-card">
+        <div class="action-icon"><i class="fas fa-history"></i></div>
+        <div class="action-title">Historique</div>
+        <div class="action-description">Consulter vos transactions</div>
+      </a>
+      <a href="cartes.html" class="action-card">
+        <div class="action-icon"><i class="fas fa-credit-card"></i></div>
+        <div class="action-title">Cartes</div>
+        <div class="action-description">Gérer vos cartes bancaires</div>
+      </a>
+      <a href="rib.html" class="action-card">
+        <div class="action-icon"><i class="fas fa-file-alt"></i></div>
+        <div class="action-title">RIB</div>
+        <div class="action-description">Télécharger votre RIB</div>
+      </a>
+    </div>
+
+    <div class="charts-section">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Évolution du Solde</div>
+          <div class="chart-controls">
+            <button class="chart-control active">7J</button>
+            <button class="chart-control">1M</button>
+            <button class="chart-control">3M</button>
+            <button class="chart-control">1A</button>
+          </div>
+        </div>
+        <div class="chart-container"><canvas id="balanceChart"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">Répartition des Dépenses</div>
+        </div>
+        <div class="chart-container"><canvas id="expenseChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="navigation_bar">
+    <div class="navigation">
+      <ul>
+        <li class="list active"><a href="solde.html"><span class="icon"><ion-icon name="home-outline"></ion-icon></span><span class="text">Accueil</span></a></li>
+        <li class="list"><a href="virement.html"><span class="icon"><ion-icon name="send-outline"></ion-icon></span><span class="text">Virement</span></a></li>
+        <li class="list"><a href="historique.html"><span class="icon"><ion-icon name="time-outline"></ion-icon></span><span class="text">Historique</span></a></li>
+        <li class="list"><a href="cartes.html"><span class="icon"><ion-icon name="card-outline"></ion-icon></span><span class="text">Cartes</span></a></li>
+        <li class="list"><a href="rib.html"><span class="icon"><ion-icon name="document-text-outline"></ion-icon></span><span class="text">RIB</span></a></li>
+        <div class="indicator"></div>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // 1. DERNIÈRE CONNEXION — heure actuelle enregistrée à chaque visite
+    // ============================================================
+    function initLastConnection() {
+      const now = new Date();
+
+      // Date + heure formatées en français
+      const dateStr = now.toLocaleDateString('fr-FR', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      });
+      const timeStr = now.toLocaleTimeString('fr-FR', {
+        hour: '2-digit', minute: '2-digit'
+      });
+
+      // Afficher "Aujourd'hui à HH:MM"
+      const lastConnEl = document.getElementById('lastConnection');
+      if (lastConnEl) {
+        lastConnEl.textContent = `Aujourd'hui à ${timeStr}`;
+      }
+
+      // Afficher la date du jour
+      const currentDateEl = document.getElementById('currentDate');
+      if (currentDateEl) {
+        currentDateEl.textContent = dateStr;
+      }
+    }
+
+    // ============================================================
+    // 2. INITIALISATION AU CHARGEMENT
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+      // Date + dernière connexion
+      initLastConnection();
+
+      // Animation de la section compte
+      const accountSection = document.querySelector('.account-info-section');
+      accountSection.style.opacity = '0';
+      accountSection.style.transform = 'translateY(-20px)';
+      setTimeout(() => {
+        accountSection.style.transition = 'all 0.8s ease-out';
+        accountSection.style.opacity = '1';
+        accountSection.style.transform = 'translateY(0)';
+      }, 300);
+
+      // Graphique évolution du solde
+      const balanceCtx = document.getElementById('balanceChart').getContext('2d');
+      new Chart(balanceCtx, {
+        type: 'line',
+        data: {
+          labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+          datasets: [{
+            label: 'Solde',
+            data: [15200, 15400, 15300, 15650, 15800, 15900, 15847.50],
+            borderColor: '#ec0000',
+            backgroundColor: 'rgba(236, 0, 0, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#ec0000',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: false,
+              ticks: { callback: function(value) { return value.toLocaleString('fr-FR') + ' €'; } },
+              grid: { color: 'rgba(0, 0, 0, 0.05)' }
+            },
+            x: { grid: { display: false } }
+          },
+          elements: { point: { hoverRadius: 8 } }
+        }
+      });
+
+      // Graphique répartition dépenses
+      const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+      new Chart(expenseCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Alimentation', 'Transport', 'Loisirs', 'Factures', 'Autres'],
+          datasets: [{
+            data: [450, 320, 280, 650, 485.30],
+            backgroundColor: ['#ec0000', '#ff3333', '#ff6666', '#ff9999', '#ffcccc'],
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { padding: 20, usePointStyle: true, font: { size: 12 } }
+            }
+          }
+        }
+      });
+
+      // Animation cartes
+      const cards = document.querySelectorAll('.dashboard-card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(50px)';
+        setTimeout(() => {
+          card.style.transition = 'all 0.6s ease-out';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 150);
+      });
+
+      // Animation actions
+      setTimeout(() => {
+        const actions = document.querySelectorAll('.action-card');
+        actions.forEach((action, index) => {
+          action.style.opacity = '0';
+          action.style.transform = 'scale(0.8)';
+          setTimeout(() => {
+            action.style.transition = 'all 0.5s ease-out';
+            action.style.opacity = '1';
+            action.style.transform = 'scale(1)';
+          }, index * 100);
+        });
+      }, 800);
+    });
+
+    // ============================================================
+    // 3. CONTRÔLES DES GRAPHIQUES
+    // ============================================================
+    document.querySelectorAll('.chart-control').forEach(control => {
+      control.addEventListener('click', function() {
+        document.querySelectorAll('.chart-control').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // ============================================================
+    // 4. NOTIFICATIONS
+    // ============================================================
+    document.querySelector('.notification-btn').addEventListener('click', function() {
+      Swal.fire({
+        title: 'Notifications',
+        html: `
+          <div style="text-align: left; padding: 1rem;">
+            <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border-left: 4px solid #10b981;">
+              <strong>Virement reçu</strong><br><small>+3 200,00 €</small>
+            </div>
+            <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(236, 0, 0, 0.1); border-radius: 8px; border-left: 4px solid #ec0000;">
+              <strong>Carte utilisée</strong><br><small>-85,40 € - Carrefour</small>
+            </div>
+            <div style="padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 8px; border-left: 4px solid #f59e0b;">
+              <strong>Rappel</strong><br><small>Facture d'électricité à payer</small>
+            </div>
+          </div>
+        `,
+        confirmButtonColor: '#ec0000',
+        confirmButtonText: 'Fermer'
+      });
+    });
+
+    // ============================================================
+    // 5. DÉCONNEXION
+    // ============================================================
+    function deconnexion() {
+      Swal.fire({
+        title: 'Déconnexion',
+        text: 'Êtes-vous sûr de vouloir vous déconnecter ?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ec0000',
+        cancelButtonColor: '#718096',
+        confirmButtonText: 'Oui, me déconnecter',
+        cancelButtonText: 'Annuler'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.body.style.opacity = '0';
+          document.body.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            window.location.href = 'connexion.html';
+          }, 300);
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

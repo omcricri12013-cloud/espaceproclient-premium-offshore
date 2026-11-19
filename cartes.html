@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Cartes - Santander - Banque Numérique</title>
+  <link rel="icon" type="image/png" href="assets/images/santander-emblem.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script type="module" src="https://unpkg.com/ionicons%405.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons%405.5.2/dist/ionicons/ionicons.js"></script>
+  <style>
+:root {
+  --primary-green: #ec0000;
+  --dark-green: #b30000;
+  --light-green: #ff3333;
+  --success-green: #10b981;
+  --danger-red: #ef4444;
+  --warning-orange: #f59e0b;
+  --info-blue: #ec0000;
+  --background-light: #fff5f5;
+  --background-white: #ffffff;
+  --text-primary: #1a202c;
+  --text-secondary: #718096;
+  --border-light: #f0d0d0;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --card-gold: linear-gradient(135deg, #FFD700, #FFA500);
+  --card-platinum: linear-gradient(135deg, #C0C0C0, #808080);
+  --card-black: linear-gradient(135deg, #2c2c2c, #000000);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #ffe5e5 0%, #ffcccc 50%, #ffb3b3 100%);
+  min-height: 100vh;
+  padding-bottom: 80px;
+  color: var(--text-primary);
+}
+
+.header {
+  background: var(--background-white);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.header-title { display: flex; align-items: center; gap: 1rem; }
+.bank-logo { height: 45px; width: auto; transition: transform 0.3s ease; }
+.bank-logo:hover { transform: scale(1.05); }
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #ec0000, #ff3333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logout-btn {
+  background: linear-gradient(135deg, #ff3333, #ec0000);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+.logout-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(236, 0, 0, 0.3); }
+
+.main-container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+
+/* Hero Section — fond rouge Santander */
+.hero-section {
+  background: linear-gradient(135deg, #ffe5e5 0%, #ffcccc 50%, #ffb3b3 100%);
+  color: var(--text-primary);
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(236, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 40%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, transparent 70%);
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(3deg); }
+}
+
+.hero-content { position: relative; z-index: 1; text-align: center; }
+.hero-title { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #b30000; }
+.hero-subtitle { font-size: 1.2rem; color: #b30000; opacity: 0.85; }
+
+.cards-section { margin-bottom: 3rem; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.section-title { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); }
+
+.add-card-btn {
+  background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+.add-card-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(236, 0, 0, 0.3); }
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.card-container { perspective: 1000px; height: 220px; }
+
+.credit-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 16px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  cursor: pointer;
+}
+.credit-card:hover { transform: rotateY(10deg) rotateX(5deg); }
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  backface-visibility: hidden;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.card-front { background: var(--card-gold); color: white; position: relative; }
+.card-back { background: linear-gradient(135deg, #2c2c2c, #1a1a1a); color: white; transform: rotateY(180deg); }
+
+.card-front::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 60%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.card-type { font-size: 1rem; font-weight: 600; opacity: 0.9; }
+.card-network { font-size: 1.5rem; opacity: 0.8; }
+
+.card-chip {
+  width: 45px;
+  height: 35px;
+  background: linear-gradient(135deg, #f0f0f0, #c0c0c0);
+  border-radius: 6px;
+  margin: 1rem 0;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+.card-chip::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  background: linear-gradient(135deg, #e0e0e0, #a0a0a0);
+  border-radius: 3px;
+}
+
+.card-number {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  font-family: 'Courier New', monospace;
+  margin: 1rem 0;
+}
+
+.card-footer { display: flex; justify-content: space-between; align-items: flex-end; }
+.card-holder { font-size: 0.9rem; font-weight: 500; opacity: 0.9; }
+.card-expiry { font-size: 0.9rem; font-weight: 500; opacity: 0.9; }
+
+.card-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.credit-card:hover .card-actions { opacity: 1; }
+
+.action-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+.action-btn:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.1); }
+
+.credit-card.card-platinum .card-front { background: var(--card-platinum); color: #2c2c2c; }
+.card-black { background: var(--card-black); color: white; }
+.credit-card.card-green .card-front { background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); color: white; }
+
+.quick-actions {
+  background: var(--background-white);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-light);
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.action-card {
+  background: var(--background-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+.action-card:hover { transform: translateY(-4px); border-color: var(--primary-green); box-shadow: var(--shadow-lg); }
+
+.action-icon {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+  background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+}
+.action-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+.action-description { font-size: 0.8rem; color: var(--text-secondary); }
+
+.spending-section {
+  background: var(--background-white);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-light);
+}
+
+.spending-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.period-selector { display: flex; background: var(--background-light); border-radius: 8px; padding: 0.25rem; }
+.period-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+.period-btn.active { background: var(--primary-green); color: white; }
+
+.spending-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.spending-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--background-light);
+  border-radius: 12px;
+  border-left: 4px solid var(--primary-green);
+}
+
+.spending-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  background: var(--primary-green);
+  color: white;
+}
+
+.spending-info { flex: 1; }
+.spending-category { font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+.spending-amount { font-size: 1.1rem; font-weight: 700; color: var(--primary-green); }
+
+.navigation_bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--background-white);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  z-index: 1000;
+  border-top: 1px solid var(--border-light);
+}
+.navigation { max-width: 1200px; margin: 0 auto; padding: 0.75rem 0; }
+.navigation ul { display: flex; justify-content: space-around; list-style: none; margin: 0; padding: 0; position: relative; }
+.navigation .list { position: relative; width: 80px; z-index: 2; }
+.navigation .list a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: 0.3s;
+  padding: 8px 0;
+}
+.navigation .list.active a { color: var(--primary-green); transform: translateY(-4px); }
+.navigation .icon { font-size: 24px; margin-bottom: 4px; transition: 0.3s; }
+.navigation .text { font-size: 12px; font-weight: 500; transition: 0.3s; }
+
+.indicator {
+  position: absolute;
+  height: 3px;
+  bottom: -12px;
+  width: 50px;
+  background: var(--primary-green);
+  border-radius: 3px;
+  transition: 0.3s;
+}
+.navigation .list:nth-child(1).active ~ .indicator { transform: translateX(calc(80px * 0 + 15px)); }
+.navigation .list:nth-child(2).active ~ .indicator { transform: translateX(calc(80px * 1 + 15px)); }
+.navigation .list:nth-child(3).active ~ .indicator { transform: translateX(calc(80px * 2 + 15px)); }
+.navigation .list:nth-child(4).active ~ .indicator { transform: translateX(calc(80px * 3 + 15px)); }
+.navigation .list:nth-child(5).active ~ .indicator { transform: translateX(calc(80px * 4 + 15px)); }
+
+@media (max-width: 768px) {
+  .main-container { padding: 0 1rem; }
+  .hero-section { padding: 2rem 1rem; }
+  .hero-title { font-size: 2rem; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .card-container { height: 200px; }
+  .spending-grid { grid-template-columns: 1fr; }
+  .actions-grid { grid-template-columns: repeat(2, 1fr); }
+  .section-header { flex-direction: column; gap: 1rem; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 1.75rem; }
+  .hero-subtitle { font-size: 1rem; }
+  .actions-grid { grid-template-columns: 1fr; }
+  .header { padding: 1rem; }
+  .page-title { font-size: 1.2rem; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.credit-card { animation: fadeInUp 0.6s ease-out; }
+.credit-card:nth-child(1) { animation-delay: 0.1s; }
+.credit-card:nth-child(2) { animation-delay: 0.2s; }
+.credit-card:nth-child(3) { animation-delay: 0.3s; }
+
+.action-card { animation: fadeInUp 0.6s ease-out; }
+.action-card:nth-child(1) { animation-delay: 0.1s; }
+.action-card:nth-child(2) { animation-delay: 0.2s; }
+.action-card:nth-child(3) { animation-delay: 0.3s; }
+.action-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+.loading { animation: pulse 1.5s ease-in-out infinite; }
+</style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-title">
+      <img src="assets/images/Santander_Logo.png" alt="Santander Logo" class="bank-logo">
+      <h1 class="page-title">Gestion des Cartes</h1>
+    </div>
+    <button class="logout-btn" onclick="deconnexion()">
+      <i class="fas fa-sign-out-alt"></i>
+      Déconnexion
+    </button>
+  </header>
+
+  <div class="main-container">
+    <div class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">Vos Cartes Bancaires</h1>
+        <p class="hero-subtitle">Gérez vos cartes en toute sécurité</p>
+      </div>
+    </div>
+
+    <div class="cards-section">
+      <div class="section-header">
+        <h2 class="section-title">Mes Cartes</h2>
+        <button class="add-card-btn" onclick="addNewCard()">
+          <i class="fas fa-plus"></i>
+          Nouvelle Carte
+        </button>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card-container">
+          <div class="credit-card card-gold" onclick="flipCard(this)">
+            <div class="card-face card-front">
+              <div class="card-actions">
+                <button class="action-btn" onclick="blockCard(event, 'gold')" title="Bloquer la carte">
+                  <i class="fas fa-lock"></i>
+                </button>
+                <button class="action-btn" onclick="cardSettings(event, 'gold')" title="Paramètres">
+                  <i class="fas fa-cog"></i>
+                </button>
+              </div>
+              <div class="card-header">
+                <div class="card-type">GOLD</div>
+                <div class="card-network"><i class="fab fa-cc-visa"></i></div>
+              </div>
+              <div class="card-chip"></div>
+              <div class="card-number">4976 •••• •••• 1234</div>
+              <div class="card-footer">
+                <div class="card-holder">CHARLES TERRISSE</div>
+                <div class="card-expiry">12/27</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-container">
+          <div class="credit-card card-platinum" onclick="flipCard(this)">
+            <div class="card-face card-front">
+              <div class="card-actions">
+                <button class="action-btn" onclick="blockCard(event, 'platinum')" title="Bloquer la carte">
+                  <i class="fas fa-lock"></i>
+                </button>
+                <button class="action-btn" onclick="cardSettings(event, 'platinum')" title="Paramètres">
+                  <i class="fas fa-cog"></i>
+                </button>
+              </div>
+              <div class="card-header">
+                <div class="card-type">PLATINUM</div>
+                <div class="card-network"><i class="fab fa-cc-mastercard"></i></div>
+              </div>
+              <div class="card-chip"></div>
+              <div class="card-number">5432 •••• •••• 9876</div>
+              <div class="card-footer">
+                <div class="card-holder">CHARLES TERRISSE</div>
+                <div class="card-expiry">08/27</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-container">
+          <div class="credit-card card-green" onclick="flipCard(this)">
+            <div class="card-face card-front">
+              <div class="card-actions">
+                <button class="action-btn" onclick="blockCard(event, 'business')" title="Bloquer la carte">
+                  <i class="fas fa-lock"></i>
+                </button>
+                <button class="action-btn" onclick="cardSettings(event, 'business')" title="Paramètres">
+                  <i class="fas fa-cog"></i>
+                </button>
+              </div>
+              <div class="card-header">
+                <div class="card-type">BUSINESS</div>
+                <div class="card-network"><i class="fab fa-cc-amex"></i></div>
+              </div>
+              <div class="card-chip"></div>
+              <div class="card-number">3782 •••••• •1007</div>
+              <div class="card-footer">
+                <div class="card-holder">CHARLES TERRISSE</div>
+                <div class="card-expiry">03/28</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <h2 class="section-title" style="margin-bottom: 1.5rem;">Actions Rapides</h2>
+      <div class="actions-grid">
+        <div class="action-card" onclick="activateCard()">
+          <div class="action-icon"><i class="fas fa-power-off"></i></div>
+          <div class="action-title">Activer une carte</div>
+          <div class="action-description">Activez votre nouvelle carte</div>
+        </div>
+        <div class="action-card" onclick="changePin()">
+          <div class="action-icon" style="background: linear-gradient(135deg, var(--info-blue), #b30000);">
+            <i class="fas fa-key"></i>
+          </div>
+          <div class="action-title">Modifier le code PIN</div>
+          <div class="action-description">Changez le code de vos cartes</div>
+        </div>
+        <div class="action-card" onclick="setLimits()">
+          <div class="action-icon" style="background: linear-gradient(135deg, var(--warning-orange), #d97706);">
+            <i class="fas fa-sliders-h"></i>
+          </div>
+          <div class="action-title">Gérer les plafonds</div>
+          <div class="action-description">Définissez vos limites</div>
+        </div>
+        <div class="action-card" onclick="contactlessSettings()">
+          <div class="action-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+            <i class="fas fa-wifi"></i>
+          </div>
+          <div class="action-title">Paiement sans contact</div>
+          <div class="action-description">Paramètres NFC</div>
+        </div>
+        <div class="action-card" onclick="orderReplacement()">
+          <div class="action-icon" style="background: linear-gradient(135deg, var(--danger-red), #dc2626);">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <div class="action-title">Carte de remplacement</div>
+          <div class="action-description">Commandez une nouvelle carte</div>
+        </div>
+        <div class="action-card" onclick="viewStatements()">
+          <div class="action-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <div class="action-title">Relevés de compte</div>
+          <div class="action-description">Consultez vos relevés</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spending-section">
+      <div class="spending-header">
+        <h2 class="section-title">Analyse des Dépenses</h2>
+        <div class="period-selector">
+          <button class="period-btn active" onclick="changePeriod(this, 'week')">Cette semaine</button>
+          <button class="period-btn" onclick="changePeriod(this, 'month')">Ce mois</button>
+          <button class="period-btn" onclick="changePeriod(this, 'year')">Cette année</button>
+        </div>
+      </div>
+
+      <div class="spending-grid">
+        <div class="spending-item">
+          <div class="spending-icon"><i class="fas fa-shopping-cart"></i></div>
+          <div class="spending-info">
+            <div class="spending-category">Achats</div>
+            <div class="spending-amount">0,00 €</div>
+          </div>
+        </div>
+        <div class="spending-item">
+          <div class="spending-icon" style="background: var(--info-blue);"><i class="fas fa-utensils"></i></div>
+          <div class="spending-info">
+            <div class="spending-category">Restaurants</div>
+            <div class="spending-amount">0,00 €</div>
+          </div>
+        </div>
+        <div class="spending-item">
+          <div class="spending-icon" style="background: var(--warning-orange);"><i class="fas fa-gas-pump"></i></div>
+          <div class="spending-info">
+            <div class="spending-category">Carburant</div>
+            <div class="spending-amount">0,00 €</div>
+          </div>
+        </div>
+        <div class="spending-item">
+          <div class="spending-icon" style="background: #8b5cf6;"><i class="fas fa-plane"></i></div>
+          <div class="spending-info">
+            <div class="spending-category">Voyages</div>
+            <div class="spending-amount">0,00 €</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="navigation_bar">
+    <div class="navigation">
+      <ul>
+        <li class="list"><a href="solde.html"><span class="icon"><ion-icon name="home-outline"></ion-icon></span><span class="text">Accueil</span></a></li>
+        <li class="list"><a href="virement.html"><span class="icon"><ion-icon name="send-outline"></ion-icon></span><span class="text">Virement</span></a></li>
+        <li class="list"><a href="historique.html"><span class="icon"><ion-icon name="time-outline"></ion-icon></span><span class="text">Historique</span></a></li>
+        <li class="list active"><a href="cartes.html"><span class="icon"><ion-icon name="card-outline"></ion-icon></span><span class="text">Cartes</span></a></li>
+        <li class="list"><a href="rib.html"><span class="icon"><ion-icon name="document-text-outline"></ion-icon></span><span class="text">RIB</span></a></li>
+        <div class="indicator"></div>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.credit-card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(50px) rotateY(-15deg)';
+        setTimeout(() => {
+          card.style.transition = 'all 0.8s ease-out';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0) rotateY(0deg)';
+        }, index * 200);
+      });
+
+      const actionCards = document.querySelectorAll('.action-card');
+      actionCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+          card.style.transition = 'all 0.6s ease-out';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 1000 + index * 100);
+      });
+    });
+
+    function flipCard(card) {
+      if (card.style.transform === 'rotateY(180deg)') {
+        card.style.transform = 'rotateY(0deg)';
+      } else {
+        card.style.transform = 'rotateY(180deg)';
+      }
+    }
+
+    function addNewCard() {
+      Swal.fire({
+        title: 'Nouvelle Carte Bancaire',
+        html: `
+          <div style="text-align: left;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Type de carte :</label>
+            <select id="cardType" class="swal2-input" style="margin-bottom: 1rem;">
+              <option value="classic">Carte Classique</option>
+              <option value="gold">Carte Gold</option>
+              <option value="platinum">Carte Platinum</option>
+              <option value="business">Carte Business</option>
+            </select>
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Motif de la demande :</label>
+            <select id="reason" class="swal2-input">
+              <option value="first">Première carte</option>
+              <option value="replacement">Remplacement</option>
+              <option value="additional">Carte supplémentaire</option>
+              <option value="upgrade">Changement de gamme</option>
+            </select>
+          </div>
+        `,
+        confirmButtonText: 'Commander',
+        confirmButtonColor: '#ec0000',
+        showCancelButton: true,
+        cancelButtonText: 'Annuler',
+        preConfirm: () => {
+          const cardType = document.getElementById('cardType').value;
+          const reason = document.getElementById('reason').value;
+          if (!cardType || !reason) {
+            Swal.showValidationMessage('Veuillez remplir tous les champs');
+            return false;
+          }
+          return { cardType, reason };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Commande en cours...',
+            html: 'Traitement de votre demande <b></b> secondes.',
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: () => {
+              Swal.showLoading();
+              const b = Swal.getHtmlContainer().querySelector('b');
+              const timer = setInterval(() => {
+                b.textContent = Math.ceil(Swal.getTimerLeft() / 1000);
+              }, 100);
+            }
+          }).then(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Carte commandée !',
+              text: 'Votre nouvelle carte sera livrée sous 5-7 jours ouvrés',
+              confirmButtonColor: '#ec0000'
+            });
+          });
+        }
+      });
+    }
+
+    function blockCard(event, cardType) {
+      event.stopPropagation();
+      Swal.fire({
+        title: 'Bloquer la carte ?',
+        text: `Êtes-vous sûr de vouloir bloquer votre carte ${cardType.toUpperCase()} ?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#718096',
+        confirmButtonText: 'Oui, bloquer',
+        cancelButtonText: 'Annuler'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Carte bloquée !',
+            text: `Votre carte ${cardType.toUpperCase()} a été bloquée avec succès`,
+            confirmButtonColor: '#ec0000'
+          });
+        }
+      });
+    }
+
+    function cardSettings(event, cardType) {
+      event.stopPropagation();
+      Swal.fire({
+        title: 'Paramètres de la carte',
+        html: `
+          <div style="text-align: left;">
+            <h4 style="margin-bottom: 1rem; color: #ec0000;">Carte ${cardType.toUpperCase()}</h4>
+            <div style="margin-bottom: 1rem;">
+              <label style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" checked> Paiements en ligne
