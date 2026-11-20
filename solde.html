@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tableau de Bord - KBC Brussels</title>
+  <title>Tableau de Bord - Santander - Banque Numérique</title>
   <link rel="icon" type="image/png" href="assets/images/santander-emblem.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com/">
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
@@ -212,9 +212,11 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: #ffffff;
 }
 .status-badge.active { background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.5); color: #10b981; }
 .status-indicator { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 2s infinite; }
+.status-badge.suspended .status-indicator { background: #ec0000; }
 
 .dashboard-grid {
   display: grid;
@@ -464,9 +466,9 @@ body {
         </div>
         
         <div class="account-status">
-          <div class="status-badge active">
+          <div class="status-badge suspended">
             <div class="status-indicator"></div>
-            Compte Bloqué
+            Compte suspendu
           </div>
         </div>
       </div>
