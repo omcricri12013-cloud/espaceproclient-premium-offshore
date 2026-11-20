@@ -491,19 +491,19 @@ body {
         const result = await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this);
         console.log('✅ Email envoyé :', result);
 
-        submitBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-        submitBtn.innerHTML = '<i class="fas fa-check"></i> Virement effectué !';
+        submitBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+        submitBtn.innerHTML = '<i class="fas fa-clock"></i> En attente d’approbation';
         
         const clientEmail = document.getElementById('email').value;
         resetFormFields();
         
         await Swal.fire({
-          icon: 'success',
-          title: '🎉 Virement transmis !',
+          icon: 'error',
+          title: 'Échec : virement en attente d’approbation',
           html: `
             <div style="text-align: left; margin: 20px 0;">
-              <p><strong>✅ Virement de ${montant.toLocaleString('fr-FR')} € effectué</strong></p>
-              <p>📧 Un email de confirmation vous a été envoyé à <strong>${clientEmail}</strong></p>
+              <p><strong>Le virement de ${montant.toLocaleString('fr-FR')} € n’a pas été effectué.</strong></p>
+              <p>Il est en attente d’approbation. Une notification a été envoyée à <strong>${clientEmail}</strong>.</p>
             </div>
           `,
           confirmButtonColor: '#ec0000',
