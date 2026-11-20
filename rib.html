@@ -501,7 +501,7 @@ body {
         <div class="iban-section">
           <h3 class="iban-title">Code IBAN (International)</h3>
           <div class="iban-display">
-            <div class="iban-value" id="ibanValue">CH76 3000 4005 8300 0015 7841 Z25</div>
+            <div class="iban-value" id="ibanValue">CH76 0823 5005 8300 0015 7841 Z</div>
             <button class="copy-btn" onclick="copyIBAN()" title="Copier l'IBAN">
               <i class="fas fa-copy"></i>
             </button>
@@ -781,7 +781,7 @@ body {
       setTimeout(() => {
         qrContainer.innerHTML = `
           <div style="width: 160px; height: 160px; background: white; border: 2px solid var(--primary-green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--primary-green); text-align: center; line-height: 1.2; padding: 1rem;">
-            QR CODE<br>IBAN<br>FR76 3000<br>4005 8300<br>0015 7841<br>Z25
+            QR CODE<br>IBAN<br>CH76 0823<br>5005 8300<br>0015 7841<br>Z
           </div>
         `;
         Swal.fire({
