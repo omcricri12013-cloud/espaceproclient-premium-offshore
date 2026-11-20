@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historique des Transactions - BNP Paribas</title>
+  <title>Historique des Transactions - Santander - Banque Numérique</title>
   <link rel="icon" type="image/png" href="assets/images/santander-emblem.png">
   <link rel="preconnect" href="https://fonts.googleapis.com/">
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
@@ -721,11 +721,11 @@ body {
             <span class="stat-label">Transactions</span>
           </div>
           <div class="stat-item">
-            <span class="stat-value">450€</span>
+            <span class="stat-value">-26 200,00 €</span>
             <span class="stat-label">Volume total</span>
           </div>
           <div class="stat-item">
-            <span class="stat-value">3</span>
+            <span class="stat-value">0</span>
             <span class="stat-label">En attente</span>
           </div>
         </div>
@@ -909,7 +909,7 @@ body {
       },
       {
         id: 6,
-        type: 'pending',
+        type: 'expense',
         title: 'Prélèvement - EDF',
         details: 'Facture électricité',
         amount: -1200.00,
@@ -922,7 +922,7 @@ body {
         type: 'expense',
         title: 'Restaurant - Cheval Blanc by Peter Knogl',
         details: 'Dîner professionnel',
-        amount: -98.75,
+        amount: 7200.00,
         date: new Date(2025, 7, 1, 19, 21, 4),
         status: 'Validé',
         icon: 'fa-utensils'
@@ -1100,7 +1100,7 @@ body {
             <div class="transaction-info">
               <div class="transaction-title">${transaction.title}</div>
               <div class="transaction-details">${transaction.details}</div>
-              ${transaction.id !== 4 ? `<div class="transaction-date">${formatDate(transaction.date)}</div>` : ''}
+              <div class="transaction-date">${transaction.id === 4 ? transaction.date.toLocaleDateString('fr-FR') : formatDate(transaction.date)}</div>
             </div>
           </div>
           <div class="transaction-amount ${transaction.type}">
